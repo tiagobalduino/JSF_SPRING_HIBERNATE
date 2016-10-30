@@ -1,0 +1,128 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="#{pageContext.request.contextPath}/index1.xhtml"
+	xmlns:mdjnm="http://mojarra.dev.java.net/mojarra_ext">
+	<ui:define name="conteudo">
+
+		<h:form id="form">
+		<p:growl id="growl" showDetail="true" sticky="true" /> 
+			<br />
+			<br />
+			<p:panel header="Management Permissions">
+
+				<p:fieldset toggleable="true" legend="Permission List">
+					<p:panelGrid>
+						<p:commandButton icon="fa fa-plus"
+							action="#{permissionBean.init()}" update="dlg1,formDlg1"
+							oncomplete="PF('dlg1').show();" title="Add Permission"
+							type="Button" />
+					</p:panelGrid>
+
+					<p:dataTable value="#{permissionBean.list()}" var="_entity"
+						reflow="true">
+						<p:column headerText="ID" width="15%" style="text-align:center">
+							<h:outputText value="#{_entity.id}" />
+						</p:column>
+
+						<p:column headerText="Name" style="text-align:center">
+							<h:outputText value="#{_entity.name}" />
+						</p:column>
+
+						<p:column headerText="Description" style="text-align:center">
+							<h:outputText value="#{_entity.description}" />
+						</p:column>
+
+						<p:column headerText="Actions" width="14%"
+							style="text-align:center">
+							<p:commandButton icon="fa fa-pencil" update="dlg2,formDlg2"
+								action="#{permissionBean.loadPermission(_entity)}"
+								oncomplete="PF('dlg2').show();" title="Edit Permission"
+								type="Button" />
+							<p:commandButton icon="fa fa-close" update="@form"
+								actionListener="#{permissionBean.delete(_entity)}"
+								style="margin-left:3%" title="Delete Permission" type="Button">
+								<p:confirm header="Confirmation" message="Are you sure?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+
+							<p:confirmDialog global="true" showEffect="fade"
+								hideEffect="fade">
+								<p:commandButton value="Yes" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="No" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+							</p:confirmDialog>
+						</p:column>
+
+					</p:dataTable>
+
+				</p:fieldset>
+			</p:panel>
+
+		</h:form>
+
+		<p:dialog id="dlg1" header="Add Permission" widgetVar="dlg1"
+			minHeight="40">
+			<h:form id="formDlg1">
+
+				<p:panelGrid columns="2" layout="grid">
+					<h:panelGrid>
+						<p:outputLabel for="name" value="Name" />
+						<p:inputText id="name" required="true"
+							requiredMessage="Required field!"
+							value="#{permissionBean.permission.name}" />
+					</h:panelGrid>
+
+					<h:panelGrid>
+						<p:outputLabel for="description" value="Description" />
+						<p:inputText id="description" required="true"
+							requiredMessage="Required field!"
+							value="#{permissionBean.permission.description}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:commandButton value="Save" update=":form,formDlg1"
+							icon="fa fa-save" action="#{permissionBean.add()}" />
+						<p:commandButton value="Back" icon="fa fa-arrow-left"
+							style="margin-left:4px" immediate="true"
+							oncomplete="PF('dlg1').hide();" />
+					</h:panelGrid>
+
+				</p:panelGrid>
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog id="dlg2" header="Edit Permission" widgetVar="dlg2"
+			minHeight="40">
+			<h:form id="formDlg2">
+
+				<p:panelGrid columns="2" layout="grid">
+					<h:panelGrid>
+						<p:outputLabel for="name" value="Name" />
+						<p:inputText id="name" value="#{permissionBean.permission.name}" />
+					</h:panelGrid>
+
+					<h:panelGrid>
+						<p:outputLabel for="description" value="Description" />
+						<p:inputText id="description" requiredMessage="Required field!"
+							value="#{permissionBean.permission.description}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:commandButton value="Save" update=":form" icon="fa fa-save"
+							action="#{permissionBean.edit()}" oncomplete="PF('dlg2').hide();" />
+						<p:commandButton value="Back" icon="fa fa-arrow-left"
+							style="margin-left:4px" immediate="true"
+							oncomplete="PF('dlg2').hide();" />
+					</h:panelGrid>
+
+				</p:panelGrid>
+			</h:form>
+
+		</p:dialog>
+	</ui:define>
+</ui:composition>

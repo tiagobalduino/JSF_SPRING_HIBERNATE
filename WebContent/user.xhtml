@@ -1,0 +1,258 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	template="#{pageContext.request.contextPath}/index1.xhtml"
+	xmlns:mdjnm="http://mojarra.dev.java.net/mojarra_ext">
+	<ui:define name="conteudo">
+
+		<h:form id="form">
+			<br />
+			<br />
+			<p:growl id="growl" showDetail="true" sticky="true" /> 
+			<p:panel header="Management Users">
+
+				<p:fieldset toggleable="true" legend="User List">
+					<p:panelGrid>
+						<p:commandButton icon="fa fa-plus" action="#{userBean.init()}"
+							update="dlg1,formDlg1" oncomplete="PF('dlg1').show();"
+							title="Add User" type="Button" />
+					</p:panelGrid>
+
+					<p:dataTable value="#{userBean.list()}" var="_entity" reflow="true">
+						<p:column headerText="ID" width="15%" style="text-align:center">
+							<h:outputText value="#{_entity.id}" />
+						</p:column>
+
+						<p:column headerText="Name" style="text-align:center">
+							<h:outputText value="#{_entity.name}" />
+						</p:column>
+
+						<p:column headerText="Description" style="text-align:center">
+							<h:outputText value="#{_entity.description}" />
+						</p:column>
+						
+						<p:column headerText="Department" style="text-align:center">
+							<h:outputText value="#{_entity.department.name}" />
+						</p:column>
+
+						<p:column headerText="Actions" width="14%"
+							style="text-align:center">
+							<p:commandButton icon="fa fa-pencil" update="dlg2,formDlg2"
+								action="#{userBean.loadUser(_entity)}"
+								oncomplete="PF('dlg2').show();" title="Edit User" type="Button" />
+							<p:commandButton icon="fa fa-close" update="@form"
+								actionListener="#{userBean.delete(_entity)}"
+								style="margin-left:3%" title="Delete User" type="Button">
+								<p:confirm header="Confirmation" message="Are you sure?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+
+							<p:confirmDialog global="true" showEffect="fade"
+								hideEffect="fade">
+								<p:commandButton value="Yes" type="button"
+									styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="No" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+							</p:confirmDialog>
+						</p:column>
+					</p:dataTable>
+				</p:fieldset>
+			</p:panel>
+
+		</h:form>
+
+		<p:dialog id="dlg1" header="Add User" widgetVar="dlg1" minHeight="40">
+			<h:form id="formDlg1">
+				<p:growl id="growl" showDetail="true" sticky="true" /> 
+				<p:panelGrid columns="3" layout="grid">
+					<h:panelGrid>
+						<p:outputLabel for="name" value="Name" />
+						<p:inputText id="name" required="true"
+							requiredMessage="Required field!" value="#{userBean.user.name}" />
+					</h:panelGrid>
+
+					<h:panelGrid>
+						<p:outputLabel for="description" value="Description" />
+						<p:inputText id="description" required="true"
+							requiredMessage="Required field!"
+							value="#{userBean.user.description}" />
+					</h:panelGrid>
+
+					<h:panelGrid>
+						<p:outputLabel for="department" value="Department" />
+						<p:selectOneMenu id="department" effect="drop" required="true"
+							value="#{userBean.user.department}"
+							converter="#{DepartmentConverter}">
+							<f:selectItem itemLabel="Select" noSelectionOption="true" />
+							<f:selectItems value="#{userBean.departmentList()}" var="_entity"
+								itemLabel="#{_entity.description}" itemValue="#{_entity}" />
+							<p:ajax process="@this" partialSubmit="true" event="change" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:commandButton value="Save" update=":form,formDlg1,growl"
+							icon="fa fa-save" action="#{userBean.add()}"
+							 />
+						<p:commandButton value="Back" icon="fa fa-arrow-left"
+							style="margin-left:4px" immediate="true"
+							oncomplete="PF('dlg1').hide();" />
+					</h:panelGrid>
+
+				</p:panelGrid>
+				<br />
+				<br />
+				<p:fieldset legend="Add Permission">
+					<p:panelGrid columns="1" layout="grid">
+
+						<h:panelGrid columns="1">
+							<p:outputLabel for="permission" value="Permissions" />
+							<p:selectOneMenu id="permission"
+								converter="#{PermissionConverter}" effect="drop" required="true"
+								value="#{userBean.permission}">
+								<f:selectItem itemLabel="Select" noSelectionOption="true" />
+								<f:selectItems value="#{userBean.permissionList()}"
+									var="_entity" itemLabel="#{_entity.description}"
+									itemValue="#{_entity}" />
+								<p:ajax process="@this" partialSubmit="true" event="change" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+
+						<h:panelGrid columns="2">
+							<p:commandButton value="Add Permission"
+								action="#{userBean.addPermissionUser()}" update="@form"
+								icon="fa fa-plus" />
+						</h:panelGrid>
+
+					</p:panelGrid>
+
+					<p:dataTable id="permissions"
+						value="#{userBean.user.permissionsList()}" var="_entity"
+						reflow="true">
+						<p:column headerText="ID" width="15%" style="text-align:center">
+							<h:outputText value="#{_entity.id}" />
+						</p:column>
+
+						<p:column headerText="Name" width="15%" style="text-align:center">
+							<h:outputText value="#{_entity.name}" />
+						</p:column>
+
+						<p:column headerText="Description" width="15%"
+							style="text-align:center">
+							<h:outputText value="#{_entity.description}" />
+						</p:column>
+
+						<p:column headerText="Remove" style="text-align:center"
+							width="10%">
+
+							<p:commandButton title="Remove Permission"
+								action="#{userBean.removePermissionUser(_entity)}"
+								update="permissions" icon="fa fa-fw fa-remove" />
+						</p:column>
+					</p:dataTable>
+				</p:fieldset>
+			</h:form>
+
+		</p:dialog>
+
+		<p:dialog id="dlg2" header="Edit User" widgetVar="dlg2" minHeight="40">
+			<h:form id="formDlg2">
+				<p:growl id="growl" showDetail="true" sticky="true" /> 
+				<p:panelGrid columns="3" layout="grid">
+					<h:panelGrid>
+						<p:outputLabel for="name" value="Name" />
+						<p:inputText id="name" required="true"
+							requiredMessage="Required field!" value="#{userBean.user.name}" />
+					</h:panelGrid>
+
+					<h:panelGrid>
+						<p:outputLabel for="description" value="Description" />
+						<p:inputText id="description" required="true"
+							requiredMessage="Required field!"
+							value="#{userBean.user.description}" />
+					</h:panelGrid>
+
+					<h:panelGrid>
+						<p:outputLabel for="department" value="Department" />
+						<p:selectOneMenu id="department" effect="drop" required="true"
+							value="#{userBean.user.department}"
+							converter="#{DepartmentConverter}">
+							<f:selectItem itemLabel="Select" noSelectionOption="true" />
+							<f:selectItems value="#{userBean.departmentList()}" var="_entity"
+								itemLabel="#{_entity.description}" itemValue="#{_entity}" />
+							<p:ajax process="@this" partialSubmit="true" event="change" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:commandButton value="Edit" update=":form,formDlg1"
+							icon="fa fa-save" action="#{userBean.edit()}"
+							oncomplete="PF('dlg2').hide();" />
+						<p:commandButton value="Back" icon="fa fa-arrow-left"
+							style="margin-left:4px" immediate="true"
+							oncomplete="PF('dlg2').hide();" />
+					</h:panelGrid>
+
+				</p:panelGrid>
+				<br />
+				<br />
+				<p:fieldset legend="Add Permission">
+					<p:panelGrid columns="1" layout="grid">
+
+						<h:panelGrid columns="1">
+							<p:outputLabel for="permission" value="Permissions" />
+							<p:selectOneMenu id="permission"
+								converter="#{PermissionConverter}" effect="drop" required="true"
+								value="#{userBean.permission}">
+								<f:selectItem itemLabel="Select" noSelectionOption="true" />
+								<f:selectItems value="#{userBean.permissionList()}"
+									var="_entity" itemLabel="#{_entity.description}"
+									itemValue="#{_entity}" />
+								<p:ajax process="@this" partialSubmit="true" event="change" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+
+
+						<h:panelGrid columns="2">
+							<p:commandButton value="Add Permission"
+								action="#{userBean.addPermissionUser()}" update="@form"
+								icon="fa fa-plus" />
+						</h:panelGrid>
+
+					</p:panelGrid>
+
+					<p:dataTable id="permissions"
+						value="#{userBean.user.permissionsList()}" var="_entity"
+						reflow="true">
+						<p:column headerText="ID" width="15%" style="text-align:center">
+							<h:outputText value="#{_entity.id}" />
+						</p:column>
+
+						<p:column headerText="Name" width="15%" style="text-align:center">
+							<h:outputText value="#{_entity.name}" />
+						</p:column>
+
+						<p:column headerText="Description" width="15%"
+							style="text-align:center">
+							<h:outputText value="#{_entity.description}" />
+						</p:column>
+
+						<p:column headerText="Remove" style="text-align:center"
+							width="10%">
+
+							<p:commandButton title="Remove Permission"
+								action="#{userBean.removePermissionUser(_entity)}"
+								update="permissions" icon="fa fa-fw fa-remove" />
+						</p:column>
+					</p:dataTable>
+				</p:fieldset>
+
+			</h:form>
+
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
