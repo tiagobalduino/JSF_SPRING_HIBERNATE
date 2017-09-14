@@ -40,5 +40,12 @@ public class PermissionServiceImpl implements PermissionService {
 		this.permissionDAO.delete(permission);
 		
 	}
+
+	@Override
+	@Transactional
+	public List<Permission> find(Integer id) {
+		
+		return this.permissionDAO.find(id);
+	}
  
 }

@@ -2,6 +2,7 @@ package com.tiagobalduino.springhibernate.dao;
 
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
@@ -48,6 +49,15 @@ public class PermissionDAOImpl implements PermissionDAO{
 		Session session = this.sessionFactory.getCurrentSession();
         session.delete(permission);
 		
+	}
+
+	@Override
+	public List<Permission> find(Integer id) {
+		Session session = this.sessionFactory.getCurrentSession();
+		String queryString = "from Permission as p where p.id = :id)";
+		Query query = session.createQuery (queryString);
+		query.setParameter("id", id);
+		return query.list();
 	}
  
 }

@@ -12,5 +12,6 @@ public interface PermissionService {
     public List<Permission> list();
     public void edit(Permission permission);
     public void delete(Permission permission);
+    public List<Permission> find(Integer id);
    
 }

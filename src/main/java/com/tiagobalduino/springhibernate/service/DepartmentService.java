@@ -13,5 +13,6 @@ public interface DepartmentService {
     public List<Department> list();
     public void edit(Department department);
     public void delete(Department department);
+    public List<Department> find(Integer id);
    
 }

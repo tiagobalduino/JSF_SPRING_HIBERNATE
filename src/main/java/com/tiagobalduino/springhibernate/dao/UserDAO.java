@@ -11,4 +11,5 @@ public interface UserDAO {
     public List<User> listUsers();
     public void edit(User user);
     public void delete(User user);
+    public List<User>find(Integer id);
 }
