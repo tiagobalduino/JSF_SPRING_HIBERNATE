@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
  
 /**
  * Entity Department respolsible populate Table Person 
@@ -38,7 +40,8 @@ public class Department implements Serializable {
 	@Column(name="description")
     private String description;
 	
-	@OneToMany(mappedBy="department", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST, orphanRemoval=true)
+	@JsonManagedReference 
+	@OneToMany(mappedBy="department", fetch=FetchType.EAGER, cascade=CascadeType.PERSIST, orphanRemoval=true)
 	private List<User> users;
 	
 	public List<User> getUsers() {

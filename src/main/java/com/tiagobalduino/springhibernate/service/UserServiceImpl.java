@@ -40,5 +40,11 @@ public class UserServiceImpl implements UserService {
 		this.userDAO.delete(user);
 		
 	}
+
+	@Override
+	@Transactional
+	public List<User> find(Integer id) {
+		return this.userDAO.find(id);
+	}
  
 }

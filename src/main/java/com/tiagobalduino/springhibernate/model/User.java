@@ -14,6 +14,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
  
 /**
  * Entity Department respolsible populate Table Person 
@@ -39,6 +42,7 @@ public class User implements Serializable {
 	@Column(name="description")
     private String description;
 	
+	@JsonIgnore
 	@ManyToMany(fetch=FetchType.EAGER)
 	@JoinTable(
 	  name="userpermission",
@@ -48,6 +52,7 @@ public class User implements Serializable {
 	
 	@ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "department_id")
+	@JsonBackReference
 	private Department department;
 	
 	

@@ -11,4 +11,5 @@ public interface PermissionDAO {
     public List<Permission> listPermissions();
     public void edit(Permission department);
     public void delete(Permission department);
+    public List<Permission> find(Integer id);
 }
